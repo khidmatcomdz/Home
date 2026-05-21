@@ -5,7 +5,7 @@
 const KhidmatcomConfig = {
   // رابط Web App من: Deploy → Nouveau déploiement → Application Web → Anyone
   // بعد النشر: الصق الرابط الكامل هنا (ينتهي بـ /exec)
-  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyhC8r9ba9UsCNxT-7zcZq_5js4UnD1mZPNmsealMJr5ClsO26jCJ2QgjSMMg_yGsGh_w/https://script.google.com/macros/s/AKfycbw5VSR1dLAxuLNQEPg6V5azYu3plkJwZSmvyUeoKOQhKF58ingJPzCXAC8JrCfS2eUYsQ/exec',
+  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw5VSR1dLAxuLNQEPg6V5azYu3plkJwZSmvyUeoKOQhKF58ingJPzCXAC8JrCfS2eUYsQ/exec',
 
   // جدول Khidmatcom (تم إنشاؤه)
   SPREADSHEET_URL: 'https://docs.google.com/spreadsheets/d/1oxzbXW3BhJPI___8DUpCbFHF5cAg051VlZi7i_oEDbs/edit'
