@@ -48,7 +48,7 @@ const KhidmatcomAPI = (function () {
       const script = document.createElement('script');
       const timeout = setTimeout(() => {
         cleanup();
-        reject(new Error('انتهت مهلة الاتصال بـ Google Sheets'));
+        reject(new Error('انتهت مهلة الاتصال بـ Google Sheets. تأكد من أن الرابط صحيح وأن Apps Script منشور للجمهور.'));
       }, 20000);
 
       function cleanup() {
@@ -66,7 +66,7 @@ const KhidmatcomAPI = (function () {
 
       script.onerror = () => {
         cleanup();
-        reject(new Error('فشل تحميل البيانات من Google Sheets'));
+        reject(new Error('فشل تحميل البيانات من Google Sheets. تأكد من أن Google Apps Script منشور كمستخدم عام ويمكن الوصول إليه.'));
       };
 
       script.src = url.toString();
@@ -90,6 +90,12 @@ const KhidmatcomAPI = (function () {
     },
     completeRequest(requestId) {
       return post('completeRequest', { requestId });
+    },
+    getTechnicians(params) {
+      return get('getTechnicians', params || {});
+    },
+    updateTechnicianStatus(technicianId, status) {
+      return get('updateTechnicianStatus', { technicianId, status });
     },
     getRequests(params) {
       return get('getRequests', params || {});
