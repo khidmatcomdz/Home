@@ -3,7 +3,7 @@
 // then deploy it as a Web app with access set to "Anyone".
 
 // معرّف جدول Khidmatcom في Google Sheets
-const SPREADSHEET_ID = '1oxzbXW3BhJPI___8DUpCbFHF5cAg051VlZi7i_oEDbs';
+// Uses the Google Sheet that this script is pasted into.
 
 const SHEETS = {
   requests: 'الطلبات',
@@ -12,13 +12,23 @@ const SHEETS = {
 };
 
 function getSpreadsheet_() {
-  return SpreadsheetApp.openById(SPREADSHEET_ID);
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) {
+    throw new Error('Open this script from inside the Google Sheet: Extensions > Apps Script');
+  }
+  return spreadsheet;
 }
 
 const REQUEST_STATUS = {
   pending: 'معلق',
   accepted: 'مقبول',
   completed: 'منجز'
+};
+
+const TECHNICIAN_STATUS = {
+  pending: 'قيد المراجعة',
+  active: 'مفعل',
+  inactive: 'موقوف'
 };
 
 function doPost(e) {
@@ -65,6 +75,19 @@ function doGet(e) {
         break;
       case 'getStatistics':
         result = { status: 'success', data: getStatistics_(sheets.requests, sheets.technicians) };
+        break;
+      case 'getTechnicians':
+        result = { status: 'success', data: getTechnicians_(sheets.technicians, params.status) };
+        break;
+      case 'updateTechnicianStatus':
+        result = (function () {
+          try {
+            updateTechnicianStatus_(sheets.technicians, params.technicianId, params.status);
+            return { status: 'success' };
+          } catch (error) {
+            return { status: 'error', message: String(error) };
+          }
+        })();
         break;
       case 'loginTechnician':
         result = loginTechnician_(sheets.technicians, params.username, params.password);
@@ -379,13 +402,51 @@ function getRequests_(sheet, status, serviceType) {
 
 function getStatistics_(requestsSheet, techniciansSheet) {
   const requests = getRequests_(requestsSheet);
+  const technicians = getTechnicians_(techniciansSheet);
   return {
     pending: requests.filter(request => request.status === REQUEST_STATUS.pending).length,
     accepted: requests.filter(request => request.status === REQUEST_STATUS.accepted).length,
     completed: requests.filter(request => request.status === REQUEST_STATUS.completed).length,
     total_requests: requests.length,
-    total_technicians: Math.max(techniciansSheet.getLastRow() - 1, 0)
+    total_technicians: technicians.length,
+    pending_technicians: technicians.filter(tech => tech.status === TECHNICIAN_STATUS.pending).length
   };
+}
+
+function getTechnicians_(sheet, status) {
+  const values = sheet.getDataRange().getValues();
+  const rows = values.slice(1);
+  return rows
+    .filter(row => !status || String(row[12]) === String(status))
+    .map(row => ({
+      id: row[0],
+      name: row[1],
+      username: row[2],
+      phone: row[4],
+      email: row[5],
+      specialty: row[6],
+      city: row[7],
+      experience: row[8],
+      certifications: row[9],
+      rating: row[10],
+      created_at: row[11],
+      status: row[12],
+      completed_count: row[13]
+    }));
+}
+
+function updateTechnicianStatus_(sheet, technicianId, status) {
+  if (!technicianId) throw new Error('معرّف الفني مطلوب.');
+  const values = sheet.getDataRange().getValues();
+
+  for (let row = 1; row < values.length; row++) {
+    if (String(values[row][0]) === String(technicianId)) {
+      sheet.getRange(row + 1, 13).setValue(status || TECHNICIAN_STATUS.inactive);
+      return;
+    }
+  }
+
+  throw new Error(`الفني غير موجود: ${technicianId}`);
 }
 
 function parsePayload_(e) {
@@ -418,3 +479,4 @@ function sendEmailNotification_(recipientEmail, subject, message) {
     Logger.log(`Email notification failed: ${error}`);
   }
 }
+
