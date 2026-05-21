@@ -23,6 +23,10 @@
     .admin-actions { margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
     .admin-actions button { border: none; border-radius: 12px; padding: 0.8rem 1.4rem; cursor: pointer; font-weight: 700; }
     .admin-actions button.primary { background: #17a2b8; color: white; }
+    .admin-tabs { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .tab-btn { border: 1px solid #dfe3ea; border-radius: 12px; padding: 0.85rem 1rem; background: white; color: #0a2e4b; cursor: pointer; font-weight: 700; }
+    .tab-btn.active { background: #17a2b8; color: white; border-color: #17a2b8; }
+    .admin-section { margin-top: 1rem; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
     .stat-card { background: #f8f9fa; padding: 1rem 1rem; border-radius: 14px; border: 1px solid #e9ecef; text-align: center; }
     .stat-value { font-size: 1.8rem; font-weight: 900; color: #17a2b8; }
@@ -64,7 +68,7 @@
           <button class="primary" id="logoutBtn">تسجيل خروج</button>
         </div>
         <h1>لوحة الإدارة</h1>
-        <p>يمكنك رؤية كل الطلبات والتحكم في حالاتها من هنا.</p>
+        <p>يمكنك رؤية الطلبات والفنيين والتحكم في حالاتهم من هنا.</p>
 
         <div class="stats-grid">
           <div class="stat-card">
@@ -83,9 +87,22 @@
             <div class="stat-value" id="completedRequests">0</div>
             <div class="stat-label">طلبات منجزة</div>
           </div>
+          <div class="stat-card">
+            <div class="stat-value" id="totalTechnicians">0</div>
+            <div class="stat-label">إجمالي الفنيين</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="pendingTechnicians">0</div>
+            <div class="stat-label">فنيون بانتظار الموافقة</div>
+          </div>
         </div>
 
-        <div id="requestsTableWrapper">
+        <div class="admin-tabs">
+          <button class="tab-btn active" data-target="requestsSection">الطلبات</button>
+          <button class="tab-btn" data-target="techniciansSection">الفنيون</button>
+        </div>
+
+        <div id="requestsSection" class="admin-section">
           <table class="requests-table">
             <thead>
               <tr>
@@ -99,6 +116,25 @@
             </thead>
             <tbody id="requestsTableBody">
               <tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد بيانات حتى الآن.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="techniciansSection" class="admin-section" style="display:none;">
+          <table class="requests-table">
+            <thead>
+              <tr>
+                <th>اسم الفني</th>
+                <th>اسم المستخدم</th>
+                <th>الهاتف</th>
+                <th>المدينة</th>
+                <th>الحالة</th>
+                <th>الطلبات المنجزة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="techniciansTableBody">
+              <tr><td colspan="7" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد بيانات الفنيين حتى الآن.</td></tr>
             </tbody>
           </table>
         </div>
@@ -136,6 +172,7 @@
       document.getElementById('loginPane').style.display = 'none';
       document.getElementById('adminContent').style.display = 'block';
       clearMessage();
+      showSection('requestsSection');
       refreshAdminData();
     }
 
@@ -143,6 +180,14 @@
       document.getElementById('loginPane').style.display = 'block';
       document.getElementById('adminContent').style.display = 'none';
       clearMessage();
+    }
+
+    function showSection(sectionId) {
+      document.getElementById('requestsSection').style.display = sectionId === 'requestsSection' ? 'block' : 'none';
+      document.getElementById('techniciansSection').style.display = sectionId === 'techniciansSection' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.toggle('active', button.dataset.target === sectionId);
+      });
     }
 
     async function refreshAdminData() {
@@ -159,33 +204,73 @@
           document.getElementById('pendingRequests').textContent = data.pending || 0;
           document.getElementById('acceptedRequests').textContent = data.accepted || 0;
           document.getElementById('completedRequests').textContent = data.completed || 0;
+          document.getElementById('totalTechnicians').textContent = data.total_technicians || 0;
+          document.getElementById('pendingTechnicians').textContent = data.pending_technicians || 0;
         }
 
         const requests = await KhidmatcomAPI.getRequests();
-        const rows = (requests.data || []).slice(0, 50);
-        const body = document.getElementById('requestsTableBody');
-        if (rows.length === 0) {
-          body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد طلبات حتى الآن.</td></tr>';
-          return;
-        }
+        renderRequestsTable(requests.data || []);
 
-        body.innerHTML = rows.map(req => `
-          <tr>
-            <td>${req.id || ''}</td>
-            <td>${req.client_name || ''}</td>
-            <td>${req.client_phone || ''}</td>
-            <td>${req.client_city || ''}</td>
-            <td><span class="badge ${req.status === 'معلق' ? 'pending' : req.status === 'مقبول' ? 'accepted' : 'completed'}">${req.status || ''}</span></td>
-            <td>
-              ${req.status === 'معلق' ? `<button class="btn-small primary" onclick="updateRequestStatus('${req.id}','accepted')">قبول</button>` : ''}
-              ${req.status === 'مقبول' ? `<button class="btn-small success" onclick="updateRequestStatus('${req.id}','completed')">إنهاء</button>` : ''}
-            </td>
-          </tr>
-        `).join('');
+        const technicians = await KhidmatcomAPI.getTechnicians();
+        renderTechniciansTable(technicians.data || []);
       } catch (error) {
         console.error(error);
         showMessage('تعذر تحميل بيانات الإدارة. حاول مرة أخرى لاحقاً.');
       }
+    }
+
+    function renderRequestsTable(rows) {
+      const body = document.getElementById('requestsTableBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد طلبات حتى الآن.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = rows.map(req => `
+        <tr>
+          <td>${req.id || ''}</td>
+          <td>${req.client_name || ''}</td>
+          <td>${req.client_phone || ''}</td>
+          <td>${req.client_city || ''}</td>
+          <td><span class="badge ${req.status === 'معلق' ? 'pending' : req.status === 'مقبول' ? 'accepted' : 'completed'}">${req.status || ''}</span></td>
+          <td>
+            ${req.status === 'معلق' ? `<button class="btn-small primary" onclick="updateRequestStatus('${req.id}','accepted')">قبول</button>` : ''}
+            ${req.status === 'مقبول' ? `<button class="btn-small success" onclick="updateRequestStatus('${req.id}','completed')">إنهاء</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTechniciansTable(rows) {
+      const body = document.getElementById('techniciansTableBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد بيانات الفنيين حتى الآن.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = rows.map(tech => {
+        const statusClass = tech.status === 'قيد المراجعة' ? 'pending' : tech.status === 'مفعل' ? 'accepted' : 'completed';
+        let actions = '';
+        if (tech.status === 'قيد المراجعة') {
+          actions = `<button class="btn-small primary" onclick="setTechnicianStatus('${tech.id}','مفعل')">موافقة</button>`;
+        } else if (tech.status === 'مفعل') {
+          actions = `<button class="btn-small danger" onclick="setTechnicianStatus('${tech.id}','موقوف')">إيقاف</button>`;
+        } else {
+          actions = `<button class="btn-small success" onclick="setTechnicianStatus('${tech.id}','مفعل')">تفعيل</button>`;
+        }
+
+        return `
+          <tr>
+            <td>${tech.name || ''}</td>
+            <td>${tech.username || ''}</td>
+            <td>${tech.phone || ''}</td>
+            <td>${tech.city || ''}</td>
+            <td><span class="badge ${statusClass}">${tech.status || ''}</span></td>
+            <td>${tech.completed_count || 0}</td>
+            <td>${actions}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     async function updateRequestStatus(requestId, status) {
@@ -199,6 +284,16 @@
       } catch (error) {
         console.error(error);
         showMessage('حدث خطأ أثناء تحديث حالة الطلب.');
+      }
+    }
+
+    async function setTechnicianStatus(technicianId, status) {
+      try {
+        await KhidmatcomAPI.updateTechnicianStatus(technicianId, status);
+        await refreshAdminData();
+      } catch (error) {
+        console.error(error);
+        showMessage('حدث خطأ أثناء تحديث حالة الفني.');
       }
     }
 
@@ -218,6 +313,10 @@
     document.getElementById('logoutBtn').addEventListener('click', () => {
       setAuthenticated(false);
       showLoginPane();
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(button => {
+      button.addEventListener('click', () => showSection(button.dataset.target));
     });
 
     window.addEventListener('load', () => {
