@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل فني جديد - Khidmatcom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f4f7fb; }
+    .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .auth-card { width: 100%; max-width: 520px; background: white; border-radius: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); padding: 2rem; }
+    .auth-card h1 { font-size: 2rem; margin-bottom: 0.5rem; color: #0a2e4b; }
+    .auth-card p { color: #6c757d; margin-bottom: 1.5rem; }
+    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .form-group { width: 100%; text-align: right; margin-bottom: 1rem; }
+    .form-group.half { width: calc(50% - 0.5rem); }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid #dfe3ea; font-size: 1rem; }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .btn-submit { width: 100%; padding: 0.95rem; background: #17a2b8; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 1rem; }
+    .auth-footer { text-align: center; margin-top: 1rem; color: #6c757d; }
+    .auth-footer a { color: #17a2b8; text-decoration: none; font-weight: 700; }
+    .message { margin-top: 1rem; padding: 1rem; border-radius: 12px; display: none; }
+    .message.error { background: #f8d7da; color: #721c24; }
+    .message.success { background: #d4edda; color: #155724; }
+    @media (max-width: 640px) { .form-group.half { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h1>تسجيل فني جديد</h1>
+      <p>أنشئ حسابًا باسم مستخدم وكلمة مرور للدخول إلى لوحة التحكم.</p>
+
+      <div id="message" class="message"></div>
+
+      <form id="registerForm">
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="tech_name">الاسم الكامل</label>
+            <input id="tech_name" name="tech_name" type="text" required placeholder="أدخل اسمك الكامل" />
+          </div>
+          <div class="form-group half">
+            <label for="tech_username">اسم المستخدم</label>
+            <input id="tech_username" name="tech_username" type="text" required placeholder="اسم المستخدم" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="tech_password">كلمة المرور</label>
+            <input id="tech_password" name="tech_password" type="password" required placeholder="كلمة المرور" />
+          </div>
+          <div class="form-group half">
+            <label for="tech_confirm_password">تأكيد كلمة المرور</label>
+            <input id="tech_confirm_password" name="tech_confirm_password" type="password" required placeholder="تأكيد كلمة المرور" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tech_email">البريد الإلكتروني</label>
+          <input id="tech_email" name="tech_email" type="email" required placeholder="example@gmail.com" />
+        </div>
+        <div class="form-group">
+          <label for="tech_phone">رقم الهاتف</label>
+          <input id="tech_phone" name="tech_phone" type="tel" required placeholder="213791234567" />
+        </div>
+        <div class="form-group">
+          <label for="tech_specialty">التخصص</label>
+          <select id="tech_specialty" name="tech_specialty" required>
+            <option value="">اختر تخصصك</option>
+            <option value="السباكة">السباكة</option>
+            <option value="الكهرباء">الكهرباء</option>
+            <option value="التنظيف">التنظيف</option>
+            <option value="البناء">البناء</option>
+            <option value="الخدمات العامة">الخدمات العامة</option>
+            <option value="الديكور">الديكور</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="tech_city">المدينة</label>
+            <input id="tech_city" name="tech_city" type="text" required placeholder="المدينة" />
+          </div>
+          <div class="form-group half">
+            <label for="tech_experience">سنوات الخبرة</label>
+            <input id="tech_experience" name="tech_experience" type="number" min="0" required placeholder="عدد سنوات الخبرة" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tech_certifications">الشهادات أو الرخص</label>
+          <textarea id="tech_certifications" name="tech_certifications" placeholder="اذكر الشهادات أو الرخص التي تملكها (اختياري)"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">إنشاء حساب</button>
+      </form>
+
+      <div class="auth-footer">
+        لديك حساب؟ <a href="technician-login.html">الدخول إلى لوحة الفنيين</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="khidmatcom.config.js"></script>
+  <script src="khidmatcom-api.js"></script>
+  <script>
+    function showMessage(text, type = 'error') {
+      const message = document.getElementById('message');
+      message.textContent = text;
+      message.className = `message ${type}`;
+      message.style.display = 'block';
+    }
+
+    function clearMessage() {
+      const message = document.getElementById('message');
+      message.style.display = 'none';
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearMessage();
+
+      if (!KhidmatcomAPI.isConfigured()) {
+        showMessage('يرجى ضبط رابط Google Apps Script في khidmatcom.config.js أولاً.');
+        return;
+      }
+
+      const formData = new FormData(event.target);
+      const password = formData.get('tech_password');
+      const confirmPassword = formData.get('tech_confirm_password');
+
+      if (password !== confirmPassword) {
+        showMessage('كلمة المرور وتأكيدها غير متطابقين.');
+        return;
+      }
+
+      const data = {
+        tech_name: formData.get('tech_name'),
+        tech_username: formData.get('tech_username'),
+        tech_password: password,
+        tech_email: formData.get('tech_email'),
+        tech_phone: formData.get('tech_phone'),
+        tech_specialty: formData.get('tech_specialty'),
+        tech_city: formData.get('tech_city'),
+        tech_experience: formData.get('tech_experience'),
+        tech_certifications: formData.get('tech_certifications')
+      };
+
+      try {
+        const result = await KhidmatcomAPI.registerTechnician(data);
+        if (result.status === 'success') {
+          showMessage('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success');
+          setTimeout(() => window.location.href = 'technician-login.html', 1800);
+        } else {
+          showMessage(result.message || 'حدث خطأ أثناء إنشاء الحساب.');
+        }
+      } catch (error) {
+        console.error(error);
+        showMessage('تعذر الاتصال بـ Google Sheets. حاول مرة أخرى لاحقاً.');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الفنيين - Khidmatcom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-wrapper {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #2c3e50;
+      color: white;
+      padding: 2rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .sidebar-menu i {
+      margin-left: 0.5rem;
+      width: 20px;
+    }
+
+    .main-content {
+      background: #f8f9fa;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .top-bar {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .top-bar h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #2c3e50;
+      margin: 0;
+    }
+
+    .tech-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .tech-badge {
+      background: #e9ecef;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .btn-logout {
+      background: #dc3545;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #c82333;
+      transform: translateY(-2px);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      text-align: center;
+      border-top: 4px solid #17a2b8;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #17a2b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: white;
+      border: 2px solid #e9ecef;
+      color: #2c3e50;
+      padding: 0.7rem 1.5rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: #17a2b8;
+      border-color: #17a2b8;
+      color: white;
+    }
+
+    .tab-btn:hover {
+      border-color: #17a2b8;
+      color: #17a2b8;
+    }
+
+    .requests-list {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .request-item {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+      transition: all 0.3s;
+    }
+
+    .request-item:last-child {
+      border-bottom: none;
+    }
+
+    .request-item:hover {
+      background: #f8f9fa;
+    }
+
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .request-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .request-id {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.3rem;
+    }
+
+    .request-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .detail-item {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .detail-icon {
+      color: #17a2b8;
+      width: 20px;
+      text-align: center;
+    }
+
+    .detail-text {
+      color: #6c757d;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .btn-accept {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .btn-accept:hover {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-contact {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .btn-contact:hover {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-complete {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .btn-complete:hover {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #6c757d;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6c757d;
+    }
+
+    .modal-close:hover {
+      color: #2c3e50;
+    }
+
+    .registration-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        position: relative;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .tech-info {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .request-header {
+        flex-direction: column;
+      }
+
+      .request-details {
+        grid-template-columns: 1fr;
+      }
+
+      .request-actions {
+        flex-direction: column;
+      }
+
+      .btn-action {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="dashboard-wrapper">
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">لوحة الفنيين</div>
+        <div class="sidebar-subtitle">Khidmatcom</div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showTab('pending', this)"><i class="fas fa-hourglass-half"></i> الطلبات المعلقة</a></li>
+        <li><a href="#" onclick="showTab('accepted', this)"><i class="fas fa-check-circle"></i> الطلبات المقبولة</a></li>
+        <li><a href="#" onclick="showTab('completed', this)"><i class="fas fa-star"></i> الطلبات المنجزة</a></li>
+        <li><hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;"></li>
+        <li><a href="technician-register.html"><i class="fas fa-user-plus"></i> تسجيل فني جديد</a></li>
+        <li><a href="#" onclick="openProfileModal()"><i class="fas fa-user-circle"></i> ملفي الشخصي</a></li>
+        <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+        <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+      </ul>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+      <!-- الشريط العلوي -->
+      <div class="top-bar">
+        <h1>مرحباً بك في لوحة الفنيين</h1>
+        <div class="tech-info">
+          <span id="technicianName" class="tech-badge"><i class="fas fa-user"></i> فني محترف</span>
+          <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <!-- الإحصائيات -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="pendingCount">0</div>
+          <div class="stat-label">طلبات معلقة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="acceptedCount">0</div>
+          <div class="stat-label">طلبات مقبولة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="completedCount">0</div>
+          <div class="stat-label">طلبات منجزة</div>
+        </div>
+        <div class="stat-card" style="border-top-color: #ffc107;">
+          <div class="stat-value" id="ratingValue">4.8</div>
+          <div class="stat-label">تقييمك</div>
+        </div>
+      </div>
+
+      <!-- علامات التبويب -->
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="showTab('pending', this)">الطلبات المعلقة</button>
+        <button class="tab-btn" onclick="showTab('accepted', this)">الطلبات المقبولة</button>
+        <button class="tab-btn" onclick="showTab('completed', this)">الطلبات المنجزة</button>
+      </div>
+
+      <!-- قائمة الطلبات المعلقة -->
+      <div id="pendingTab" class="tab-content">
+        <div class="requests-list" id="pendingRequests">
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+            <p>لا توجد طلبات معلقة حالياً</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- قائمة الطلبات المقبولة -->
+      <div id="acceptedTab" class="tab-content" style="display: none;">
+        <div class="requests-list" id="acceptedRequests">
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+            <p>لا توجد طلبات مقبولة حالياً</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- قائمة الطلبات المنجزة -->
+      <div id="completedTab" class="tab-content" style="display: none;">
+        <div class="requests-list" id="completedRequests">
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-archive"></i></div>
+            <p>لا توجد طلبات منجزة حالياً</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- نموذج الملف الشخصي -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <span class="modal-close" onclick="closeProfileModal()">×</span>
+      <div class="modal-header">ملفي الشخصي</div>
+
+      <div id="profileContent" style="text-align: right; line-height: 2;">
+        <!-- سيتم ملؤه بـ JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="khidmatcom.config.js"></script>
+  <script src="khidmatcom-api.js"></script>
+  <script>
+    const STORAGE_KEY = 'khidmatcom_technician';
+
+    let currentTechnician = loadTechnicianProfile();
+    if (!currentTechnician.id) {
+      window.location.href = 'technician-login.html';
+    }
+    let requests = [];
+    let activeTab = 'pending';
+    let isLoadingRequests = false;
+
+    function loadTechnicianProfile() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) { /* ignore */ }
+      return {
+        id: '',
+        name: 'فني',
+        specialty: '',
+        city: '',
+        phone: '',
+        email: '',
+        experience: 0,
+        rating: 0,
+        acceptedCount: 0,
+        completedCount: 0
+      };
+    }
+
+    function saveTechnicianProfile(profile) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      currentTechnician = profile;
+      document.getElementById('technicianName').textContent = profile.name || 'فني محترف';
+    }
+
+    function getTechnicianId() {
+      if (currentTechnician.id) return currentTechnician.id;
+      const stored = localStorage.getItem('khidmatcom_technician_id');
+      return stored ? `TECH-${stored}` : 'TECH-guest';
+    }
+
+    async function refreshRequestsFromSheets() {
+      if (!KhidmatcomAPI.isConfigured()) {
+        showConnectionWarning();
+        return;
+      }
+
+      isLoadingRequests = true;
+      try {
+        const result = await KhidmatcomAPI.getRequests();
+        if (result.status === 'success') {
+          requests = result.data || [];
+          loadRequests(activeTab);
+        } else {
+          console.error(result.message || 'فشل تحميل الطلبات');
+        }
+      } catch (error) {
+        console.error(error);
+        showConnectionWarning();
+      } finally {
+        isLoadingRequests = false;
+      }
+    }
+
+    function showConnectionWarning() {
+      ['pendingRequests', 'acceptedRequests', 'completedRequests'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.querySelector('.connection-warning')) {
+          el.innerHTML = `
+            <div class="empty-state connection-warning">
+              <div class="empty-icon"><i class="fas fa-link"></i></div>
+              <p>لم يتم ربط Google Sheets بعد.</p>
+              <p style="font-size:0.9rem;color:#6c757d;">حدّث <code>khidmatcom.config.js</code> برابط Apps Script ثم أعد تحميل الصفحة.</p>
+            </div>
+          `;
+        }
+      });
+    }
+
+    // عرض التبويب
+    function showTab(tabName, clickedEl) {
+      activeTab = tabName;
+
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+
+      document.getElementById(tabName + 'Tab').style.display = 'block';
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      if (clickedEl) {
+        clickedEl.classList.add('active');
+      }
+
+      loadRequests(tabName);
+    }
+
+    // تحميل الطلبات
+    function loadRequests(status) {
+      const requestsMap = {
+        'pending': 'pendingRequests',
+        'accepted': 'acceptedRequests',
+        'completed': 'completedRequests'
+      };
+
+      const containerId = requestsMap[status];
+      const container = document.getElementById(containerId);
+
+      // تصفية الطلبات حسب الحالة
+      let filteredRequests = requests.filter(r => {
+        if (status === 'pending') return r.status === 'معلق';
+        if (status === 'accepted') return r.status === 'مقبول';
+        if (status === 'completed') return r.status === 'منجز';
+        return true;
+      });
+
+      if (filteredRequests.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+            <p>لا توجد طلبات في هذه الفئة</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredRequests.map(req => `
+        <div class="request-item">
+          <div class="request-header">
+            <div>
+              <div class="request-title">${req.service}</div>
+              <div class="request-id">رقم الطلب: ${req.id}</div>
+            </div>
+            <span class="status-badge status-${status === 'pending' ? 'pending' : status === 'accepted' ? 'accepted' : 'completed'}">
+              ${status === 'pending' ? 'معلق' : status === 'accepted' ? 'مقبول' : 'منجز'}
+            </span>
+          </div>
+
+          <div class="request-details">
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fas fa-user"></i></div>
+              <div>
+                <div class="detail-label">اسم العميل</div>
+                <div class="detail-text">${req.client_name}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <div class="detail-label">الهاتف</div>
+                <div class="detail-text">${req.client_phone}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <div class="detail-label">المدينة</div>
+                <div class="detail-text">${req.client_city}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+              <div>
+                <div class="detail-label">التاريخ المفضل</div>
+                <div class="detail-text">${req.preferred_date}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <div class="detail-label">الوقت المفضل</div>
+                <div class="detail-text">${req.preferred_time}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
+            <div class="detail-label">الوصف</div>
+            <p style="color: #6c757d; margin-top: 0.5rem;">${req.service_description}</p>
+          </div>
+
+          <div class="request-actions">
+            ${status === 'pending' ? `
+              <button class="btn-action btn-accept" onclick="acceptRequest('${req.id}')">
+                <i class="fas fa-check"></i> قبول الطلب
+              </button>
+              <button class="btn-action btn-contact" onclick="contactClient('${req.client_phone}')">
+                <i class="fas fa-phone"></i> اتصل بالعميل
+              </button>
+            ` : status === 'accepted' ? `
+              <button class="btn-action btn-contact" onclick="contactClient('${req.client_phone}')">
+                <i class="fas fa-phone"></i> اتصل بالعميل
+              </button>
+              <button class="btn-action btn-complete" onclick="completeRequest('${req.id}')">
+                <i class="fas fa-check-circle"></i> انتهى
+              </button>
+            ` : `
+              <button class="btn-action btn-contact" onclick="contactClient('${req.client_phone}')">
+                <i class="fas fa-phone"></i> معلومات العميل
+              </button>
+            `}
+          </div>
+        </div>
+      `).join('');
+
+      // تحديث الإحصائيات
+      updateStats();
+    }
+
+    // تحديث الإحصائيات
+    function updateStats() {
+      const pending = requests.filter(r => r.status === 'معلق').length;
+      const accepted = requests.filter(r => r.status === 'مقبول').length;
+      const completed = requests.filter(r => r.status === 'منجز').length;
+
+      document.getElementById('pendingCount').textContent = pending;
+      document.getElementById('acceptedCount').textContent = accepted;
+      document.getElementById('completedCount').textContent = completed;
+      document.getElementById('ratingValue').textContent = currentTechnician.rating;
+    }
+
+    // قبول الطلب
+    async function acceptRequest(requestId) {
+      if (!KhidmatcomAPI.isConfigured()) {
+        alert('يرجى ضبط رابط Google Apps Script أولاً.');
+        return;
+      }
+
+      try {
+        await KhidmatcomAPI.acceptRequest(requestId, getTechnicianId());
+        await refreshRequestsFromSheets();
+        alert('تم قبول الطلب بنجاح! يرجى الاتصال بالعميل لتحديد الموعد.');
+      } catch (error) {
+        alert('تعذر قبول الطلب. تحقق من الاتصال وحاول مرة أخرى.');
+        console.error(error);
+      }
+    }
+
+    // إكمال الطلب
+    async function completeRequest(requestId) {
+      if (!KhidmatcomAPI.isConfigured()) {
+        alert('يرجى ضبط رابط Google Apps Script أولاً.');
+        return;
+      }
+
+      try {
+        await KhidmatcomAPI.completeRequest(requestId);
+        await refreshRequestsFromSheets();
+        alert('تم تحديد الطلب كمنجز. شكراً لك على عملك!');
+      } catch (error) {
+        alert('تعذر إكمال الطلب. تحقق من الاتصال وحاول مرة أخرى.');
+        console.error(error);
+      }
+    }
+
+    // الاتصال بالعميل
+    function contactClient(phone) {
+      window.open(`https://wa.me/${phone}`, '_blank');
+    }
+
+    // فتح نموذج الملف الشخصي
+    function openProfileModal() {
+      const profileContent = `
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px;">
+          <p><strong>الاسم:</strong> ${currentTechnician.name}</p>
+          <p><strong>التخصص:</strong> ${currentTechnician.specialty}</p>
+          <p><strong>المدينة:</strong> ${currentTechnician.city}</p>
+          <p><strong>الهاتف:</strong> ${currentTechnician.phone}</p>
+          <p><strong>البريد:</strong> ${currentTechnician.email}</p>
+          <p><strong>سنوات الخبرة:</strong> ${currentTechnician.experience} سنة</p>
+          <p><strong>التقييم:</strong> ${currentTechnician.rating} ⭐</p>
+          <p><strong>الطلبات المقبولة:</strong> ${currentTechnician.acceptedCount}</p>
+          <p><strong>الطلبات المنجزة:</strong> ${currentTechnician.completedCount}</p>
+        </div>
+      `;
+      document.getElementById('profileContent').innerHTML = profileContent;
+      document.getElementById('profileModal').classList.add('active');
+    }
+
+    // إغلاق نموذج الملف الشخصي
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    // تسجيل الخروج
+    function logout() {
+      localStorage.removeItem(STORAGE_KEY);
+      alert('تم تسجيل الخروج بنجاح');
+      window.location.href = 'technician-login.html';
+    }
+
+    document.getElementById('technicianName').textContent = currentTechnician.name || 'فني محترف';
+
+    window.addEventListener('load', () => {
+      updateStats();
+      refreshRequestsFromSheets();
+    });
+
+    // إغلاق النماذج عند النقر خارجها
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

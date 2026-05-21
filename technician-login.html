@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دخول الفنيين - Khidmatcom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f4f7fb; }
+    .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .auth-card { width: 100%; max-width: 420px; background: white; border-radius: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); padding: 2rem; }
+    .auth-card h1 { font-size: 2rem; margin-bottom: 0.5rem; color: #0a2e4b; }
+    .auth-card p { color: #6c757d; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1rem; text-align: right; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input { width: 100%; padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid #dfe3ea; font-size: 1rem; }
+    .btn-submit { width: 100%; padding: 0.95rem; background: #17a2b8; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 1rem; }
+    .auth-footer { text-align: center; margin-top: 1rem; color: #6c757d; }
+    .auth-footer a { color: #17a2b8; text-decoration: none; font-weight: 700; }
+    .message { margin-top: 1rem; padding: 1rem; border-radius: 12px; display: none; }
+    .message.error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h1>دخول الفنيين</h1>
+      <p>ادخل بيانات حسابك للوصول إلى لوحة التحكم الخاصة بالفني.</p>
+
+      <div id="message" class="message"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">اسم المستخدم</label>
+          <input id="username" name="username" type="text" required placeholder="اسم المستخدم" />
+        </div>
+        <div class="form-group">
+          <label for="password">كلمة المرور</label>
+          <input id="password" name="password" type="password" required placeholder="كلمة المرور" />
+        </div>
+        <button type="submit" class="btn-submit">تسجيل الدخول</button>
+      </form>
+
+      <div class="auth-footer">
+        لم تملك حساب؟ <a href="technician-register.html">سجل كفني جديد</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="khidmatcom.config.js"></script>
+  <script src="khidmatcom-api.js"></script>
+  <script>
+    const STORAGE_KEY = 'khidmatcom_technician';
+
+    function showMessage(text, isError = false) {
+      const message = document.getElementById('message');
+      message.textContent = text;
+      message.className = isError ? 'message error' : 'message';
+      message.style.display = 'block';
+    }
+
+    function saveTechnicianProfile(profile) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+
+    function clearMessage() {
+      const message = document.getElementById('message');
+      message.style.display = 'none';
+    }
+
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        window.location.href = 'technician-dashboard.html';
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearMessage();
+
+      if (!KhidmatcomAPI.isConfigured()) {
+        showMessage('يرجى ضبط رابط Google Apps Script في khidmatcom.config.js أولاً.', true);
+        return;
+      }
+
+      const formData = new FormData(event.target);
+      const username = formData.get('username');
+      const password = formData.get('password');
+
+      try {
+        const result = await KhidmatcomAPI.loginTechnician(username, password);
+        if (result.status === 'success' && result.data) {
+          saveTechnicianProfile(result.data);
+          window.location.href = 'technician-dashboard.html';
+        } else {
+          showMessage(result.message || 'اسم المستخدم أو كلمة المرور غير صحيحة.', true);
+        }
+      } catch (error) {
+        console.error(error);
+        showMessage('تعذر الاتصال بـ Google Sheets. حاول مرة أخرى لاحقاً.', true);
+      }
+    });
+  </script>
+</body>
+</html>

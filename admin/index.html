@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الإدارة - Khidmatcom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { background: #f4f7fb; }
+    .admin-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .admin-card { width: 100%; max-width: 980px; background: white; border-radius: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); padding: 2rem; }
+    .admin-card h1 { font-size: 2rem; margin-bottom: 0.5rem; color: #0a2e4b; }
+    .admin-card p { color: #6c757d; margin-bottom: 1.5rem; }
+    .form-group { width: 100%; text-align: right; margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input { width: 100%; padding: 0.95rem 1rem; border-radius: 12px; border: 1px solid #dfe3ea; font-size: 1rem; }
+    .btn-submit { width: 100%; padding: 0.95rem; background: #17a2b8; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; }
+    .message { margin-top: 1rem; padding: 1rem; border-radius: 12px; display: none; }
+    .message.error { background: #f8d7da; color: #721c24; }
+    .message.success { background: #d4edda; color: #155724; }
+    .admin-content { display: none; }
+    .admin-actions { margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .admin-actions button { border: none; border-radius: 12px; padding: 0.8rem 1.4rem; cursor: pointer; font-weight: 700; }
+    .admin-actions button.primary { background: #17a2b8; color: white; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { background: #f8f9fa; padding: 1rem 1rem; border-radius: 14px; border: 1px solid #e9ecef; text-align: center; }
+    .stat-value { font-size: 1.8rem; font-weight: 900; color: #17a2b8; }
+    .stat-label { color: #6c757d; margin-top: 0.5rem; }
+    .requests-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .requests-table th, .requests-table td { padding: 0.9rem 0.8rem; border: 1px solid #e9ecef; text-align: right; }
+    .requests-table th { background: #f1f5f8; }
+    .requests-table tbody tr:hover { background: #f8f9fa; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 999px; font-weight: 700; color: white; }
+    .badge.pending { background: #ffc107; color: #212529; }
+    .badge.accepted { background: #17a2b8; }
+    .badge.completed { background: #28a745; }
+    .btn-small { padding: 0.5rem 0.9rem; border-radius: 10px; border: none; cursor: pointer; }
+    .btn-small.success { background: #28a745; color: white; }
+    .btn-small.primary { background: #17a2b8; color: white; }
+    .btn-small.danger { background: #dc3545; color: white; }
+    .btn-back { margin-top: 1rem; background: #6c757d; color: white; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrapper">
+    <div class="admin-card">
+      <div id="loginPane">
+        <h1>دخول الإدارة</h1>
+        <p>أدخل كلمة المرور للولوج إلى لوحة التحكم الخاصة بالإدارة.</p>
+        <div id="message" class="message"></div>
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="adminPassword">كلمة المرور</label>
+            <input id="adminPassword" name="adminPassword" type="password" required placeholder="KHIDMA2025" />
+          </div>
+          <button type="submit" class="btn-submit">دخول</button>
+        </form>
+      </div>
+
+      <div id="adminContent" class="admin-content">
+        <div class="admin-actions">
+          <button class="primary" id="refreshStatsBtn">تحديث البيانات</button>
+          <button class="primary" id="logoutBtn">تسجيل خروج</button>
+        </div>
+        <h1>لوحة الإدارة</h1>
+        <p>يمكنك رؤية كل الطلبات والتحكم في حالاتها من هنا.</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalRequests">0</div>
+            <div class="stat-label">إجمالي الطلبات</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="pendingRequests">0</div>
+            <div class="stat-label">طلبات معلقة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="acceptedRequests">0</div>
+            <div class="stat-label">طلبات مقبولة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="completedRequests">0</div>
+            <div class="stat-label">طلبات منجزة</div>
+          </div>
+        </div>
+
+        <div id="requestsTableWrapper">
+          <table class="requests-table">
+            <thead>
+              <tr>
+                <th>رقم الطلب</th>
+                <th>اسم العميل</th>
+                <th>الهاتف</th>
+                <th>المدينة</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody">
+              <tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد بيانات حتى الآن.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../khidmatcom.config.js"></script>
+  <script src="../khidmatcom-api.js"></script>
+  <script>
+    const ADMIN_KEY = 'khidmatcom_admin_authenticated';
+    const ADMIN_PASSWORD = 'KHIDMA2025';
+
+    function showMessage(text, isError = true) {
+      const message = document.getElementById('message');
+      message.textContent = text;
+      message.className = isError ? 'message error' : 'message success';
+      message.style.display = 'block';
+    }
+
+    function clearMessage() {
+      const message = document.getElementById('message');
+      message.style.display = 'none';
+    }
+
+    function setAuthenticated(value) {
+      sessionStorage.setItem(ADMIN_KEY, value ? '1' : '0');
+    }
+
+    function isAuthenticated() {
+      return sessionStorage.getItem(ADMIN_KEY) === '1';
+    }
+
+    function showAdminContent() {
+      document.getElementById('loginPane').style.display = 'none';
+      document.getElementById('adminContent').style.display = 'block';
+      clearMessage();
+      refreshAdminData();
+    }
+
+    function showLoginPane() {
+      document.getElementById('loginPane').style.display = 'block';
+      document.getElementById('adminContent').style.display = 'none';
+      clearMessage();
+    }
+
+    async function refreshAdminData() {
+      if (!KhidmatcomAPI.isConfigured()) {
+        showMessage('يرجى ضبط رابط Google Apps Script في khidmatcom.config.js أولاً.');
+        return;
+      }
+
+      try {
+        const stats = await KhidmatcomAPI.getStatistics();
+        if (stats.status === 'success') {
+          const data = stats.data || {};
+          document.getElementById('totalRequests').textContent = data.total_requests || 0;
+          document.getElementById('pendingRequests').textContent = data.pending || 0;
+          document.getElementById('acceptedRequests').textContent = data.accepted || 0;
+          document.getElementById('completedRequests').textContent = data.completed || 0;
+        }
+
+        const requests = await KhidmatcomAPI.getRequests();
+        const rows = (requests.data || []).slice(0, 50);
+        const body = document.getElementById('requestsTableBody');
+        if (rows.length === 0) {
+          body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:#6c757d;">لا توجد طلبات حتى الآن.</td></tr>';
+          return;
+        }
+
+        body.innerHTML = rows.map(req => `
+          <tr>
+            <td>${req.id || ''}</td>
+            <td>${req.client_name || ''}</td>
+            <td>${req.client_phone || ''}</td>
+            <td>${req.client_city || ''}</td>
+            <td><span class="badge ${req.status === 'معلق' ? 'pending' : req.status === 'مقبول' ? 'accepted' : 'completed'}">${req.status || ''}</span></td>
+            <td>
+              ${req.status === 'معلق' ? `<button class="btn-small primary" onclick="updateRequestStatus('${req.id}','accepted')">قبول</button>` : ''}
+              ${req.status === 'مقبول' ? `<button class="btn-small success" onclick="updateRequestStatus('${req.id}','completed')">إنهاء</button>` : ''}
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+        showMessage('تعذر تحميل بيانات الإدارة. حاول مرة أخرى لاحقاً.');
+      }
+    }
+
+    async function updateRequestStatus(requestId, status) {
+      try {
+        if (status === 'accepted') {
+          await KhidmatcomAPI.acceptRequest(requestId, 'admin');
+        } else if (status === 'completed') {
+          await KhidmatcomAPI.completeRequest(requestId);
+        }
+        await refreshAdminData();
+      } catch (error) {
+        console.error(error);
+        showMessage('حدث خطأ أثناء تحديث حالة الطلب.');
+      }
+    }
+
+    document.getElementById('adminLoginForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      clearMessage();
+      const password = document.getElementById('adminPassword').value.trim();
+      if (password === ADMIN_PASSWORD) {
+        setAuthenticated(true);
+        showAdminContent();
+      } else {
+        showMessage('كلمة المرور غير صحيحة.');
+      }
+    });
+
+    document.getElementById('refreshStatsBtn').addEventListener('click', refreshAdminData);
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      setAuthenticated(false);
+      showLoginPane();
+    });
+
+    window.addEventListener('load', () => {
+      if (isAuthenticated()) {
+        showAdminContent();
+      } else {
+        showLoginPane();
+      }
+    });
+  </script>
+</body>
+</html>
