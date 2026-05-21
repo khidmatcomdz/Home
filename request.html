@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اطلب خدمة - Khidmatcom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .request-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 3rem 0;
+    }
+
+    .form-header {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+      margin-bottom: 3rem;
+      border-radius: 15px;
+    }
+
+    .form-header h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .steps-progress {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .progress-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #e9ecef;
+      border: 3px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #6c757d;
+    }
+
+    .progress-step.active .progress-circle {
+      background: #17a2b8;
+      border-color: #17a2b8;
+      color: white;
+    }
+
+    .progress-step.completed .progress-circle {
+      background: #28a745;
+      border-color: #28a745;
+      color: white;
+    }
+
+    .progress-label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .service-option {
+      position: relative;
+    }
+
+    .service-option input[type="radio"] {
+      display: none;
+    }
+
+    .service-option label {
+      display: block;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #f8f9fa;
+      margin: 0;
+    }
+
+    .service-option input[type="radio"]:checked + label {
+      border-color: #17a2b8;
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .location-map {
+      width: 100%;
+      height: 300px;
+      border-radius: 10px;
+      margin-top: 1rem;
+      background: #f0f0f0;
+      border: 2px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .btn-back {
+      background: #e9ecef;
+      color: #2c3e50;
+      padding: 0.9rem 2rem;
+      border-radius: 25px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .btn-back:hover {
+      background: #dee2e6;
+      transform: translateY(-2px);
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 25px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+    }
+
+    .success-message {
+      display: none;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 1.5rem;
+      border-radius: 10px;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    .success-message h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .success-message p {
+      margin: 0.5rem 0;
+      opacity: 0.9;
+    }
+
+    .error-message {
+      display: none;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .field-required::after {
+      content: "*";
+      color: #dc3545;
+      margin-right: 0.3rem;
+    }
+
+    @media (max-width: 768px) {
+      .steps-progress {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .progress-step {
+        gap: 0.5rem;
+      }
+
+      .progress-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+      }
+
+      .form-buttons {
+        flex-direction: column;
+      }
+
+      .btn-back,
+      .btn-next {
+        width: 100%;
+      }
+
+      .form-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <span>Khidmatcom</span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="index.html#home">الرئيسية</a></li>
+          <li><a href="index.html#services">الخدمات</a></li>
+          <li><a href="index.html#how-it-works">كيف نعمل</a></li>
+        </ul>
+        <div class="nav-buttons">
+          <a href="technician-dashboard.html" class="btn-nav primary">لوحة الفنيين</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="request-page">
+    <div class="container">
+
+      <div class="form-header">
+        <h1><i class="fas fa-plus-circle"></i> اطلب خدمة الآن</h1>
+        <p>ملء النموذج سهل وسريع - ثلاث خطوات فقط</p>
+      </div>
+
+      <div class="steps-progress">
+        <div class="progress-step active" id="step1-progress">
+          <div class="progress-circle">1</div>
+          <div class="progress-label">اختر الخدمة</div>
+        </div>
+        <div class="progress-step" id="step2-progress">
+          <div class="progress-circle">2</div>
+          <div class="progress-label">معلوماتك الشخصية</div>
+        </div>
+        <div class="progress-step" id="step3-progress">
+          <div class="progress-circle">3</div>
+          <div class="progress-label">تأكيد الطلب</div>
+        </div>
+      </div>
+
+      <form id="requestForm">
+        <!-- الخطوة الأولى: اختيار الخدمة -->
+        <div class="form-section active" id="step1">
+          <div class="form-container">
+            <h2 class="section-title"><i class="fas fa-wrench"></i> الخطوة 1: اختر نوع الخدمة</h2>
+
+            <div class="form-group">
+              <label class="field-required">نوع الخدمة</label>
+              <div class="service-grid">
+                <div class="service-option">
+                  <input type="radio" id="service-plumbing" name="service_type" value="السباكة" required>
+                  <label for="service-plumbing"><i class="fas fa-water" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> السباكة</label>
+                </div>
+                <div class="service-option">
+                  <input type="radio" id="service-electrical" name="service_type" value="الكهرباء">
+                  <label for="service-electrical"><i class="fas fa-bolt" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> الكهرباء</label>
+                </div>
+                <div class="service-option">
+                  <input type="radio" id="service-cleaning" name="service_type" value="التنظيف">
+                  <label for="service-cleaning"><i class="fas fa-broom" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> التنظيف</label>
+                </div>
+                <div class="service-option">
+                  <input type="radio" id="service-building" name="service_type" value="البناء">
+                  <label for="service-building"><i class="fas fa-hammer" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> البناء</label>
+                </div>
+                <div class="service-option">
+                  <input type="radio" id="service-general" name="service_type" value="الخدمات العامة">
+                  <label for="service-general"><i class="fas fa-tools" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> عام</label>
+                </div>
+                <div class="service-option">
+                  <input type="radio" id="service-decor" name="service_type" value="الديكور">
+                  <label for="service-decor"><i class="fas fa-paint-brush" style="font-size:1.5rem; display:block; margin-bottom:0.5rem;"></i> ديكور</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-required">وصف الخدمة المطلوبة</label>
+              <textarea name="service_description" placeholder="اشرح بالتفصيل الخدمة التي تحتاجها والمشكلة الموجودة..." required></textarea>
+            </div>
+
+            <div class="form-buttons">
+              <button type="button" class="btn-next" onclick="nextStep(1)">التالي <i class="fas fa-arrow-left" style="margin-right:0.5rem;"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- الخطوة الثانية: المعلومات الشخصية -->
+        <div class="form-section" id="step2">
+          <div class="form-container">
+            <h2 class="section-title"><i class="fas fa-user"></i> الخطوة 2: معلوماتك الشخصية</h2>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="field-required">الاسم الكامل</label>
+                <input type="text" name="client_name" placeholder="أدخل اسمك الكامل" required>
+              </div>
+              <div class="form-group">
+                <label class="field-required">رقم الهاتف</label>
+                <input type="tel" name="client_phone" placeholder="213791234567" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="field-required">البريد الإلكتروني</label>
+                <input type="email" name="client_email" placeholder="example@gmail.com" required>
+              </div>
+              <div class="form-group">
+                <label class="field-required">المدينة / المنطقة</label>
+                <input type="text" name="client_city" placeholder="مثال: الجزائر، وهران..." required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-required">العنوان المفصل</label>
+              <textarea name="client_address" placeholder="أدخل العنوان كاملاً (الحي، الشارع، رقم المبنى...)" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="field-required">تاريخ الخدمة المفضل</label>
+              <input type="date" name="preferred_date" required>
+            </div>
+
+            <div class="form-group">
+              <label class="field-required">الوقت المفضل</label>
+              <select name="preferred_time" required>
+                <option value="">اختر الوقت</option>
+                <option value="صباحاً (8ص - 12ظ)">صباحاً (8ص - 12ظ)</option>
+                <option value="ظهراً (12ظ - 4م)">ظهراً (12ظ - 4م)</option>
+                <option value="عصراً (4م - 7م)">عصراً (4م - 7م)</option>
+                <option value="مساءً (7م - 10م)">مساءً (7م - 10م)</option>
+              </select>
+            </div>
+
+            <div class="form-buttons">
+              <button type="button" class="btn-back" onclick="previousStep(2)"><i class="fas fa-arrow-right" style="margin-left:0.5rem;"></i> رجوع</button>
+              <button type="button" class="btn-next" onclick="nextStep(2)">التالي <i class="fas fa-arrow-left" style="margin-right:0.5rem;"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- الخطوة الثالثة: تأكيد الطلب -->
+        <div class="form-section" id="step3">
+          <div class="form-container">
+            <h2 class="section-title"><i class="fas fa-check-circle"></i> الخطوة 3: تأكيد الطلب</h2>
+
+            <div id="orderSummary" style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;"></div>
+
+            <div class="form-group checkbox-group">
+              <div class="checkbox-item">
+                <input type="checkbox" id="accept-terms" name="accept_terms" required>
+                <label for="accept-terms">أوافق على الشروط والأحكام</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="accept-privacy" name="accept_privacy" required>
+                <label for="accept-privacy">أوافق على سياسة الخصوصية</label>
+              </div>
+            </div>
+
+            <div class="form-buttons">
+              <button type="button" class="btn-back" onclick="previousStep(3)"><i class="fas fa-arrow-right" style="margin-left:0.5rem;"></i> رجوع</button>
+              <button type="submit" class="btn-next">تأكيد الطلب <i class="fas fa-check" style="margin-right:0.5rem;"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage">
+          <h2><i class="fas fa-check-circle"></i> تم قبول الطلب بنجاح!</h2>
+          <p id="requestId"></p>
+          <p>سيتم توجيه طلبك للفني المناسب قريباً. ستتلقى إشعاراً عبر الهاتف والبريد الإلكتروني.</p>
+          <a href="index.html" style="display: inline-block; margin-top: 1rem; color: #155724; text-decoration: underline;">العودة للرئيسية</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>عن خدماتكوم</h3>
+          <p>منصة رائدة لربط العملاء بأفضل مقدمي الخدمات بجودة عالية وأسعار منافسة</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>روابط سريعة</h3>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="index.html#services">الخدمات</a></li>
+            <li><a href="index.html#how-it-works">كيف نعمل</a></li>
+            <li><a href="technician-dashboard.html">لوحة الفنيين</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>تواصل معنا</h3>
+          <ul>
+            <li><a href="https://wa.me/213791784945" target="_blank">واتساب</a></li>
+            <li><a href="mailto:khidmatcom.dz@gmail.com">البريد الإلكتروني</a></li>
+            <li><a href="https://facebook.com/khidmatcom.dz" target="_blank">فيسبوك</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        © 2025 Khidmatcom - جميع الحقوق محفوظة
+      </div>
+    </div>
+  </footer>
+
+  <script src="khidmatcom.config.js"></script>
+  <script src="khidmatcom-api.js"></script>
+  <script>
+    // الحصول على معرف الخدمة من URL إذا وُجد
+    function getServiceFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const service = params.get('service');
+      if (service) {
+        document.querySelector(`input[value="${service}"]`)?.click();
+      }
+    }
+
+    // الانتقال للخطوة التالية
+    function nextStep(currentStep) {
+      // التحقق من صحة النموذج للخطوة الحالية
+      if (validateStep(currentStep)) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${currentStep + 1}`).classList.add('active');
+        
+        // تحديث المؤشر
+        document.getElementById(`step${currentStep}-progress`).classList.add('completed');
+        document.getElementById(`step${currentStep + 1}-progress`).classList.add('active');
+
+        // عرض ملخص الطلب في الخطوة الثالثة
+        if (currentStep === 2) {
+          updateOrderSummary();
+        }
+
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    }
+
+    // الرجوع للخطوة السابقة
+    function previousStep(currentStep) {
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+      document.getElementById(`step${currentStep - 1}`).classList.add('active');
+      
+      document.getElementById(`step${currentStep}-progress`).classList.remove('active', 'completed');
+      document.getElementById(`step${currentStep - 1}-progress`).classList.add('active');
+
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    // التحقق من صحة الخطوة
+    function validateStep(step) {
+      const form = document.getElementById('requestForm');
+      const inputs = form.querySelectorAll(`#step${step} [required]`);
+      let isValid = true;
+
+      inputs.forEach(input => {
+        if (!input.value) {
+          input.style.borderColor = '#dc3545';
+          isValid = false;
+        } else {
+          input.style.borderColor = '#e0e0e0';
+        }
+      });
+
+      return isValid;
+    }
+
+    // عرض ملخص الطلب
+    function updateOrderSummary() {
+      const form = document.getElementById('requestForm');
+      const formData = new FormData(form);
+      
+      const summary = `
+        <div style="text-align: right; line-height: 2;">
+          <h3 style="color: #17a2b8; margin-bottom: 1rem;">ملخص الطلب:</h3>
+          <p><strong>نوع الخدمة:</strong> ${formData.get('service_type')}</p>
+          <p><strong>الاسم:</strong> ${formData.get('client_name')}</p>
+          <p><strong>الهاتف:</strong> ${formData.get('client_phone')}</p>
+          <p><strong>البريد:</strong> ${formData.get('client_email')}</p>
+          <p><strong>المدينة:</strong> ${formData.get('client_city')}</p>
+          <p><strong>التاريخ المفضل:</strong> ${formData.get('preferred_date')}</p>
+          <p><strong>الوقت المفضل:</strong> ${formData.get('preferred_time')}</p>
+          <p><strong>الوصف:</strong> ${formData.get('service_description')}</p>
+        </div>
+      `;
+
+      document.getElementById('orderSummary').innerHTML = summary;
+    }
+
+    // معالجة إرسال النموذج
+    document.getElementById('requestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = document.getElementById('requestForm');
+      const formData = new FormData(form);
+
+      // تحويل البيانات إلى كائن JavaScript
+      const data = Object.fromEntries(formData);
+      data.submission_date = new Date().toLocaleString('ar-DZ');
+      data.status = 'معلق';
+      data.request_id = 'REQ-' + Date.now();
+
+      try {
+        // إرسال البيانات إلى Google Sheets
+        await submitToGoogleSheets(data);
+
+        // عرض رسالة النجاح
+        const successMessage = document.getElementById('successMessage');
+        document.getElementById('requestId').innerHTML = `رقم طلبك: <strong>${data.request_id}</strong>`;
+        successMessage.classList.add('show');
+
+        // إخفاء النموذج
+        form.style.display = 'none';
+
+        // إعادة تعيين النموذج بعد 3 ثوان
+        setTimeout(() => {
+          form.reset();
+          form.style.display = 'block';
+          document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+          document.getElementById('step1').classList.add('active');
+          document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active', 'completed'));
+          document.getElementById('step1-progress').classList.add('active');
+          successMessage.classList.remove('show');
+        }, 5000);
+
+      } catch (error) {
+        // عرض رسالة الخطأ
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> حدث خطأ في إرسال الطلب. يرجى المحاولة لاحقاً.';
+        errorMessage.classList.add('show');
+        
+        setTimeout(() => {
+          errorMessage.classList.remove('show');
+        }, 5000);
+      }
+    });
+
+    // إرسال البيانات إلى Google Sheets
+    async function submitToGoogleSheets(data) {
+      if (!KhidmatcomAPI.isConfigured()) {
+        throw new Error('رابط Google Apps Script غير مضبوط — راجع khidmatcom.config.js');
+      }
+      await KhidmatcomAPI.addRequest(data);
+    }
+
+    // تحميل الصفحة
+    window.addEventListener('load', () => {
+      getServiceFromURL();
+    });
+  </script>
+
+</body>
+</html>

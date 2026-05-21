@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Khidmatcom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .test-card h2 {
+            color: #17a2b8;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .test-card p {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .test-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .test-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .quick-links {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .quick-links h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .link-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s;
+        }
+
+        .link-item:hover {
+            background: #e9ecef;
+            transform: translateX(-5px);
+        }
+
+        .link-item strong {
+            color: #17a2b8;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .link-item small {
+            color: #6c757d;
+        }
+
+        .checklist {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .checklist h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .checklist-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #17a2b8;
+        }
+
+        .checklist-checkbox:checked + label {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🧪 صفحة اختبار Khidmatcom</h1>
+        <p>اختبر جميع الصفحات والميزات</p>
+    </div>
+
+    <div class="alert alert-info">
+        <strong>💡 ملاحظة:</strong> هذه الصفحة تساعدك على اختبار الموقع محلياً قبل النشر على الإنترنت.
+    </div>
+
+    <div class="test-grid">
+        <div class="test-card">
+            <h2>🏠 الصفحة الرئيسية</h2>
+            <p>تصميم موقع احترافي يعرض:</p>
+            <ul style="margin-right: 1rem; color: #6c757d; line-height: 2;">
+                <li>✓ قسم أبطال جذاب</li>
+                <li>✓ عرض الخدمات</li>
+                <li>✓ كيفية العمل</li>
+                <li>✓ معلومات الاتصال</li>
+            </ul>
+            <a href="index.html" class="test-link">افتح الصفحة الرئيسية</a>
+        </div>
+
+        <div class="test-card">
+            <h2>📋 نموذج الطلب</h2>
+            <p>نموذج متقدم بـ 3 خطوات:</p>
+            <ul style="margin-right: 1rem; color: #6c757d; line-height: 2;">
+                <li>✓ اختيار الخدمة</li>
+                <li>✓ البيانات الشخصية</li>
+                <li>✓ تأكيد الطلب</li>
+                <li>✓ إرسال إلى Sheets</li>
+            </ul>
+            <a href="request.html" class="test-link">افتح النموذج</a>
+        </div>
+
+        <div class="test-card">
+            <h2>👨‍💼 لوحة الفنيين</h2>
+            <p>لوحة تحكم متقدمة:</p>
+            <ul style="margin-right: 1rem; color: #6c757d; line-height: 2;">
+                <li>✓ عرض الطلبات</li>
+                <li>✓ قبول الطلبات</li>
+                <li>✓ الاتصال بالعملاء</li>
+                <li>✓ الملف الشخصي</li>
+            </ul>
+            <a href="technician-dashboard.html" class="test-link">افتح اللوحة</a>
+        </div>
+    </div>
+
+    <div class="quick-links">
+        <h2>🔗 الروابط السريعة</h2>
+        <div class="links-grid">
+            <a href="index.html" class="link-item">
+                <strong>الرئيسية</strong>
+                <small>الصفحة الأساسية للموقع</small>
+            </a>
+            <a href="request.html" class="link-item">
+                <strong>طلب خدمة</strong>
+                <small>ملء نموذج الطلب</small>
+            </a>
+            <a href="request.html?service=السباكة" class="link-item">
+                <strong>طلب سباكة</strong>
+                <small>خدمة السباكة مباشرة</small>
+            </a>
+            <a href="request.html?service=الكهرباء" class="link-item">
+                <strong>طلب كهرباء</strong>
+                <small>خدمة الكهرباء مباشرة</small>
+            </a>
+            <a href="technician-dashboard.html" class="link-item">
+                <strong>لوحة الفنيين</strong>
+                <small>إدارة الطلبات</small>
+            </a>
+            <a href="README.md" target="_blank" class="link-item">
+                <strong>الدليل الشامل</strong>
+                <small>اقرأ التعليمات</small>
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-warning">
+        <strong>⚠️ قبل النشر:</strong> تأكد من تحديث رابط Google Apps Script في ملف <code>khidmatcom.config.js</code>
+    </div>
+
+    <div class="checklist">
+        <h2>✅ قائمة التحقق</h2>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check1" class="checklist-checkbox">
+            <label for="check1">اختبار الصفحة الرئيسية وجميع الروابط</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check2" class="checklist-checkbox">
+            <label for="check2">تعبئة نموذج الطلب كاملاً واختباره</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check3" class="checklist-checkbox">
+            <label for="check3">تصفح لوحة الفنيين والتحقق من الميزات</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check4" class="checklist-checkbox">
+            <label for="check4">اختبار على جهاز محمول أو لوحي</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check5" class="checklist-checkbox">
+            <label for="check5">إنشاء Google Sheet و Apps Script</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check6" class="checklist-checkbox">
+            <label for="check6">تحديث رابط Google Apps Script</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check7" class="checklist-checkbox">
+            <label for="check7">اختبار إرسال البيانات إلى Google Sheets</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check8" class="checklist-checkbox">
+            <label for="check8">التحقق من الأمان والبيانات الحساسة</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check9" class="checklist-checkbox">
+            <label for="check9">إعداد الأوراق والصيغ في Google Sheets</label>
+        </div>
+        
+        <div class="checklist-item">
+            <input type="checkbox" id="check10" class="checklist-checkbox">
+            <label for="check10">النشر على خادم الويب</label>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>خدماتكوم - منصة خدمات عند الطلب</strong></p>
+        <p>© 2025 جميع الحقوق محفوظة</p>
+        <p style="margin-top: 1rem;">
+            <a href="README.md" target="_blank" style="color: #17a2b8; text-decoration: none;">📖 الدليل الشامل</a>
+            |
+            <a href="GOOGLE-SHEETS-SETUP.md" target="_blank" style="color: #17a2b8; text-decoration: none;">🔗 دليل Google Sheets</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // حفظ حالة القائمة في Local Storage
+    document.querySelectorAll('.checklist-checkbox').forEach((checkbox, index) => {
+        const key = 'checklist-' + index;
+        const isChecked = localStorage.getItem(key) === 'true';
+        checkbox.checked = isChecked;
+        
+        checkbox.addEventListener('change', () => {
+            localStorage.setItem(key, checkbox.checked);
+        });
+    });
+
+    console.log('%c✅ صفحة الاختبار جاهزة!', 'color: #17a2b8; font-size: 16px; font-weight: bold;');
+    console.log('%cروابط مفيدة:', 'color: #138496; font-weight: bold;');
+    console.log('📖 الدليل الشامل: README.md');
+    console.log('🔗 دليل Google Sheets: GOOGLE-SHEETS-SETUP.md');
+</script>
+
+</body>
+</html>
